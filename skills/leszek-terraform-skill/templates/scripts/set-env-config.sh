@@ -28,7 +28,7 @@ _set_env_config() {
   command -v yq >/dev/null || { echo "yq not found (https://github.com/mikefarah/yq)" >&2; return 1; }
   [ -f "$config" ] || { echo "config not found: $config" >&2; return 1; }
 
-  ENV_NAME="$env" yq -e '.global.environments[] | select(. == strenv(ENV_NAME))' "$config" >/dev/null \
+  ENV_NAME="$env" yq -e '.global.environments[] | select(. == strenv(ENV_NAME))' "$config" >/dev/null 2>&1 \
     || { echo "$env is not listed in global.environments in $config" >&2; return 1; }
 
   if [ -f "$root/.env" ]; then
@@ -80,4 +80,5 @@ _set_env_config "${BASH_SOURCE[0]:-$0}" "${1:-}"
 _sec_status=$?
 unset -f _set_env_config _set_env_config_get
 # Return when sourced. Executing the script does nothing useful, so say so.
+# shellcheck disable=SC2317
 return "$_sec_status" 2>/dev/null || { echo "source this script, do not execute it" >&2; exit 1; }
