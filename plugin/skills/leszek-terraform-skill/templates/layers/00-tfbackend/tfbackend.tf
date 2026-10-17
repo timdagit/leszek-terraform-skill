@@ -22,6 +22,7 @@ resource "azurerm_storage_account" "tfbackend" {
 
   min_tls_version                  = "TLS1_2"
   cross_tenant_replication_enabled = false
+  shared_access_key_enabled        = false
 
   tags = local.tags
 }

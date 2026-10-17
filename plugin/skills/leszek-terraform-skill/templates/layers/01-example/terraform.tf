@@ -24,5 +24,7 @@ module "config" {
 
 provider "azurerm" {
   resource_providers_to_register = try(module.config.global.resource_providers, [])
+  storage_use_azuread            = true
+
   features {}
 }

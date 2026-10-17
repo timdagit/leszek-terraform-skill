@@ -33,7 +33,7 @@ The templates ship two backend layers. Keep the one that fits and delete the oth
 
 In every case `tfbackend` in the config names the storage: `rg_name`, `storage_acct` and `container_name`, with per-environment overrides. Each environment needs its own storage account or container, because the state key does not include the environment (the config module rejects duplicates).
 
-State access uses Entra ID (RBAC), never storage keys. The service principal needs Storage Blob Data Contributor on the storage account or container. For `00-tfbackend-container` it also needs Contributor on the existing account to create the container. When using existing storage, grant these before bootstrapping.
+State access uses Entra ID (RBAC), never storage keys. `00-tfbackend` creates the account with shared keys disabled, and every layer's provider sets `storage_use_azuread`. The service principal needs Storage Blob Data Contributor on the storage account or container. For `00-tfbackend-container` it also needs Contributor on the existing account to create the container. When using existing storage, grant these before bootstrapping.
 
 ## Bootstrap the backend (once per environment)
 
