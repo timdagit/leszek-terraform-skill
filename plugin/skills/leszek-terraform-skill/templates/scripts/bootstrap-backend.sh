@@ -34,6 +34,17 @@ fi
 # shellcheck disable=SC1091
 . "$root/scripts/set-env-config.sh" "$env"
 
+# Check the Azure CLI up front: the role assignment comes after resources are created, so a missing
+# login would otherwise only show up halfway through.
+if ! command -v az >/dev/null; then
+  echo "The Azure CLI (az) is required to grant the state storage role. Install it and run 'az login'." >&2
+  exit 1
+fi
+if ! az account show --subscription "$ARM_SUBSCRIPTION_ID" >/dev/null 2>&1; then
+  echo "Not logged in to Azure, or no access to subscription $ARM_SUBSCRIPTION_ID. Run 'az login' as someone who can create role assignments, then rerun." >&2
+  exit 1
+fi
+
 cd "$root/layers/$layer"
 
 # Leftover local state (e.g. from another environment's bootstrap) would be picked up as this one's.
