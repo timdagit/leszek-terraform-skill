@@ -1,0 +1,14 @@
+{
+  "name": "leszek-terraform",
+  "description": "Local marketplace for installing leszek-terraform-plugin from this checkout.",
+  "owner": {
+    "name": "timdagit"
+  },
+  "plugins": [
+    {
+      "name": "leszek-terraform-plugin",
+      "source": "./",
+      "description": "Conventions and templates for layered, YAML-configured Azure Terraform projects."
+    }
+  ]
+}
