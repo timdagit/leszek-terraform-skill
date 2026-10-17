@@ -10,9 +10,13 @@ Layout: `.claude-plugin/plugin.json` is the plugin manifest and `skills/leszek-t
 
 `terraform/` holds sample code taken from another project (Azure, `azurerm ~> 5.0`). It is untracked reference material that will be refactored to the conventions below. It is not the deliverable. There are no tests, linter config or CI.
 
-## Git and the sandbox
+## Git, Terraform and the sandbox
 
 Git commands (`git init`, `git add`, `git commit`, etc.) are excluded from the Bash sandbox by command pattern. Run each one as a single, direct command. Do not chain them with `&&`, `;` or a `cd` prefix, and do not wrap them in `-C`, a subshell or a script, or they will not match the exclusion and will fail with "Operation not permitted" on `.git`. If the shell is not in the repo root, `cd` in a separate Bash call first. Make one commit per call.
+
+`terraform init`, `terraform validate` and `terraform plan` are excluded the same way, so the same rule applies: run each as a single direct command with at least one flag, e.g. `terraform init -backend=false` and `terraform validate -no-color`. Do not chain them or use `-chdir`. `apply` and `destroy` are deliberately not excluded. `terraform fmt` needs no exclusion. Do not run `plan` against real infrastructure unless asked.
+
+To validate the templates, copy `skills/leszek-terraform-skill/templates` to a temporary directory inside the repo (e.g. `scratch-tpl/`), `cd` into a layer in its own Bash call, then run `init` and `validate`. A `cd` outside the project does not persist. Delete the scratch directory afterwards and never commit it.
 
 ## The pattern
 
