@@ -1,5 +1,5 @@
 # Identical in every layer: terraform block plus the config harness.
-# The state key and storage details are injected at init (see scripts/set-env-config.sh).
+# Storage details and the state key are injected at init (see scripts/set-env-config.sh and tfinit).
 
 terraform {
   required_providers {
