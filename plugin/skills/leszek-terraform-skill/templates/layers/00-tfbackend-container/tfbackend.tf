@@ -12,3 +12,7 @@ resource "azurerm_storage_container" "tfbackend" {
   storage_account_id    = data.azurerm_storage_account.tfbackend.id
   container_access_type = "private"
 }
+
+output "storage_account_id" {
+  value = data.azurerm_storage_account.tfbackend.id
+}

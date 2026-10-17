@@ -32,3 +32,7 @@ resource "azurerm_storage_container" "tfbackend" {
   storage_account_id    = azurerm_storage_account.tfbackend.id
   container_access_type = "private"
 }
+
+output "storage_account_id" {
+  value = azurerm_storage_account.tfbackend.id
+}
