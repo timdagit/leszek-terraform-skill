@@ -1,6 +1,6 @@
 {
-  "name": "timda-plugins",
-  "description": "timdagit's local marketplace, used to install plugins such as leszek-terraform-plugin from a checkout.",
+  "name": "local-marketplace",
+  "description": "Local marketplace used to install plugins such as leszek-terraform-plugin from a checkout.",
   "owner": {
     "name": "timdagit"
   },
