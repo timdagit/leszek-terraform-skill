@@ -1,17 +1,33 @@
 #!/usr/bin/env bash
 # One-off bootstrap of the remote state storage for an environment:
 #
-#   scripts/bootstrap-backend.sh DEV
+#   scripts/bootstrap-backend.sh DEV [layer]
 #
-# 00-tfbackend creates the storage account that holds its own state, so the first apply has to
-# use local state. This script applies it locally, then migrates the state into the new storage.
+# The backend layer (00-tfbackend, or 00-tfbackend-container when the storage account already
+# exists) creates the storage that holds its own state, so the first apply has to use local
+# state. This script applies it locally, then migrates the state into the new storage.
+# The layer is the one directory matching layers/[0-9][0-9]-tfbackend*, or the name given.
 # Needs yq, terraform and credentials in .env (see set-env-config.sh). Prompts before applying.
 
 set -euo pipefail
 
-env="${1:?usage: scripts/bootstrap-backend.sh <ENVIRONMENT>}"
+env="${1:?usage: scripts/bootstrap-backend.sh <ENVIRONMENT> [layer]}"
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-layer="00-tfbackend"
+
+if [ -n "${2:-}" ]; then
+  layer="$2"
+else
+  matches=()
+  for dir in "$root"/layers/[0-9][0-9]-tfbackend*/; do
+    [ -d "$dir" ] && matches+=("$(basename "$dir")")
+  done
+  if [ "${#matches[@]}" -ne 1 ]; then
+    echo "Expected one layers/NN-tfbackend* directory, found ${#matches[@]}. Name the layer as the second argument." >&2
+    exit 1
+  fi
+  layer="${matches[0]}"
+fi
+[ -d "$root/layers/$layer" ] || { echo "No such layer: $layer" >&2; exit 1; }
 
 # shellcheck disable=SC1091
 . "$root/scripts/set-env-config.sh" "$env"
