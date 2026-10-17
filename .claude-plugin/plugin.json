@@ -1,5 +1,8 @@
 {
   "name": "leszek-terraform-plugin",
-  "description": "Conventions and templates for layered, YAML-configured Azure Terraform projects. Provides the leszek-terraform-skill skill.",
-  "version": "0.0.1"
+  "description": "Conventions and templates for layered, YAML-configured Azure Terraform projects. Provides the leszek-terraform-skill skill. Hat tip to Leszek, who started the pattern.",
+  "version": "0.0.1",
+  "author": {
+    "name": "timdagit"
+  }
 }
