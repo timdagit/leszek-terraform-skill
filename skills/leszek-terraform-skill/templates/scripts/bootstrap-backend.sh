@@ -18,6 +18,12 @@ layer="00-tfbackend"
 
 cd "$root/layers/$layer"
 
+# Leftover local state (e.g. from another environment's bootstrap) would be picked up as this one's.
+if compgen -G "terraform.tfstate*" >/dev/null; then
+  echo "Local state files found in $PWD. Remove or move them first, then rerun." >&2
+  exit 1
+fi
+
 # A *_override.tf file swaps the backend block for local state while it exists.
 override="backend_override.tf"
 trap 'rm -f "$override"' EXIT
@@ -30,5 +36,7 @@ terraform apply
 rm -f "$override"
 terraform init -migrate-state -force-copy -backend-config="key=${layer}.tfstate"
 
+# The state is now remote. Clear the local copy so the next environment starts clean.
+rm -f terraform.tfstate terraform.tfstate.backup
+
 echo "Bootstrapped $env. State for $layer now lives in the remote backend."
-echo "The local terraform.tfstate files in $PWD are no longer needed."
