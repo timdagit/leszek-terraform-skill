@@ -33,7 +33,7 @@ The templates ship two backend layers. Keep the one that fits and delete the oth
 
 In every case `tfbackend` in the config names the storage: `rg_name`, `storage_acct` and `container_name`, with per-environment overrides. Each environment needs its own storage account or container, because the state key does not include the environment (the config module rejects duplicates).
 
-State access uses Entra ID (RBAC), never storage keys. `00-tfbackend` creates the account with shared keys disabled, and every layer's provider sets `storage_use_azuread`. The service principal needs Storage Blob Data Contributor on the storage account or container. For `00-tfbackend-container` it also needs Contributor on the existing account to create the container. When using existing storage, grant these before bootstrapping.
+State access uses Entra ID (RBAC), never storage keys. `00-tfbackend` creates the account with shared keys disabled, and every layer's provider sets `storage_use_azuread`. The service principal needs Storage Blob Data Contributor on the storage account, which Contributor does not include. The bootstrap script grants it with the Azure CLI. For `00-tfbackend-container` the service principal also needs Contributor on the existing account to create the container. If you skip the bootstrap because the account and container already exist, grant Storage Blob Data Contributor yourself.
 
 ## Bootstrap the backend (once per environment)
 
@@ -43,7 +43,7 @@ The backend layer creates the storage that holds state for every layer, includin
 scripts/bootstrap-backend.sh DEV
 ```
 
-It loads the environment, applies the backend layer with a temporary local backend (it prompts before applying), then migrates the state into the new storage. It finds the layer by name (`layers/[0-9][0-9]-tfbackend*`), or takes it as a second argument. It refuses to run if local state files are already in the layer directory. Repeat with each environment name from `global.environments`.
+It needs the Azure CLI, logged in with `az login` as someone who can create role assignments (Owner or User Access Administrator) on the storage account. The script loads the environment, applies the backend layer with a temporary local backend (it prompts before applying), grants the service principal Storage Blob Data Contributor on the account if it lacks it, then migrates the state into the new storage. The migration retries for a few minutes, because a new role assignment takes time to propagate. It finds the layer by name (`layers/[0-9][0-9]-tfbackend*`), or takes it as a second argument. It refuses to run if local state files are already in the layer directory. Repeat with each environment name from `global.environments`.
 
 ## Everyday use
 

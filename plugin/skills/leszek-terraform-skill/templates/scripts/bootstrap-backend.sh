@@ -8,6 +8,8 @@
 # state. This script applies it locally, then migrates the state into the new storage.
 # The layer is the one directory matching layers/[0-9][0-9]-tfbackend*, or the name given.
 # Needs yq, terraform and credentials in .env (see set-env-config.sh). Prompts before applying.
+# Also needs the Azure CLI, logged in (`az login`) as someone who can create role assignments:
+# the script grants the service principal Storage Blob Data Contributor on the state account.
 
 set -euo pipefail
 
@@ -49,8 +51,30 @@ printf 'terraform {\n  backend "local" {}\n}\n' > "$override"
 TF_CLI_ARGS_init="" terraform init -reconfigure
 terraform apply
 
+# State access is RBAC only, so the service principal needs Storage Blob Data Contributor on the
+# account before it can read or write state. Contributor does not include blob data access.
+# This needs an `az login` by someone allowed to create role assignments (Owner or User Access Administrator).
+account_id="$(terraform output -raw storage_account_id)"
+role="Storage Blob Data Contributor"
+if [ -z "$(az role assignment list --subscription "$ARM_SUBSCRIPTION_ID" --assignee "$ARM_CLIENT_ID" --role "$role" --scope "$account_id" --query '[0].id' -o tsv)" ]; then
+  echo "Granting '$role' to the service principal on $account_id"
+  az role assignment create --subscription "$ARM_SUBSCRIPTION_ID" --assignee "$ARM_CLIENT_ID" \
+    --assignee-principal-type ServicePrincipal --role "$role" --scope "$account_id" >/dev/null
+fi
+
 rm -f "$override"
-terraform init -migrate-state -force-copy -backend-config="key=${layer}.tfstate"
+
+# A new role assignment can take a few minutes to take effect, so retry the migration.
+attempts=10
+for ((i = 1; i <= attempts; i++)); do
+  terraform init -migrate-state -force-copy -backend-config="key=${layer}.tfstate" && break
+  if [ "$i" -eq "$attempts" ]; then
+    echo "State migration failed after $attempts attempts. The local state is intact in $PWD." >&2
+    exit 1
+  fi
+  echo "Retrying in 30s (role assignments can take a few minutes to propagate)..." >&2
+  sleep 30
+done
 
 # The state is now remote. Clear the local copy so the next environment starts clean.
 rm -f terraform.tfstate terraform.tfstate.backup
