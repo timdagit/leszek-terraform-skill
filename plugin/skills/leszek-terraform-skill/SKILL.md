@@ -28,6 +28,12 @@ README.md                the operating guide for humans
 
 Copy `templates/` for these, then replace the example layer and the placeholder names in the config (project name, storage account names, `created_by`). Add `.env`, `.terraform/`, `*.tfstate*` and `*.tfplan` to `.gitignore`.
 
+**Choose the backend layer first.** Ask the user which case applies, then keep one backend layer and delete the other (the bootstrap script expects exactly one `layers/NN-tfbackend*`):
+
+- New storage for the project: keep `00-tfbackend` (resource group, storage account, container).
+- Existing storage account, new container: keep `00-tfbackend-container` (container only).
+- Existing account and container: keep neither and skip the bootstrap. Just set the `tfbackend` names in the config. Start the other layers at `01`.
+
 ## Conventions
 
 - **Layers:** `NN-name`, numbered in apply order, each an independent root module with its own state. Layers never read each other's remote state. Their only coupling is names in the config file.
@@ -36,7 +42,7 @@ Copy `templates/` for these, then replace the example layer and the placeholder 
 - **Environment differences:** an environment-named key (e.g. `PROD`) inside a block, merged over the plain keys, one level deep. Every environment must be listed in `global.environments`.
 - **No hardcoded values:** CIDRs, names, SKUs and counts belong in the config. Give optional settings defaults with `try()`.
 - **Naming:** underscores in Terraform resource labels. No rule for Azure `name` values.
-- **State:** one backend storage account per environment, so the environment is not in the state key. The key is the layer directory name.
+- **State:** each environment has its own backend storage account or container, so the environment is not in the state key. The key is the layer directory name. Access is Entra ID (RBAC) only, never storage keys.
 - **Providers:** azurerm v5 does not register resource providers. Add each needed namespace to `global.resource_providers`.
 - **Clean code:** no commented-out code. Remove it rather than leave it.
 - **Secrets:** never put credentials in config, code or docs. They live only in `.env`.

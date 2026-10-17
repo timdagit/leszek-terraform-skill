@@ -36,15 +36,15 @@ Do not run the scripts in `templates/scripts/` against real Azure. Test `set-env
 - **Layers:** `layers/NN-name` are numbered, independent root modules, applied in order, each with its own state. Layers share no remote-state data sources. Their only coupling is shared names in the config file.
 - **One `terraform.tf` per layer:** identical in every layer. It holds the terraform block, `backend "azurerm" {}`, the `environment` variable, the `config` module call and the provider block. A change must be made in every layer's copy and in the template.
 - **Config replaces tfvars:** one YAML file (`config/main.config.yml`) with `global`, `tfbackend` and `layers` sections. `modules/config` reads it and outputs `environment`, `global`, `tfbackend` and `layer`. A layer's block is keyed by the full directory name, number included (`layers.01-example`). A key named after an environment (listed in `global.environments`) is merged over the plain keys, one level deep. `TF_VAR_environment` is the only Terraform variable.
-- **State:** one backend storage account per environment, so the environment is not in the state key. The key is the layer directory name.
+- **State:** each environment has its own backend storage account or container (`modules/config` rejects duplicates), so the environment is not in the state key. The key is the layer directory name. Access is Entra ID only (`use_azuread_auth=true`), never storage keys.
 - **Backend wiring:** `scripts/set-env-config.sh` is sourced. It loads `.env`, exports `TF_VAR_environment`, reads the backend values from the YAML with `yq` and exports `TF_CLI_ARGS_init`. The `tfinit` function it defines adds the per-layer state key when run.
 - **Credentials:** a service principal, with values in a gitignored `.env` (`.env.example` is committed). Never commit real values.
-- **Bootstrap:** `00-tfbackend` creates the storage that holds all state, including its own. `scripts/bootstrap-backend.sh <ENV>` applies it with local state, then migrates the state into the new storage.
+- **Bootstrap:** the backend layer creates the storage that holds all state, including its own. The templates ship two variants: `00-tfbackend` (new account and container) and `00-tfbackend-container` (container in an existing account). A project keeps one, or neither when the container exists already. `scripts/bootstrap-backend.sh <ENV> [layer]` finds the one `layers/NN-tfbackend*`, applies it with local state, then migrates the state into the new storage.
 - **Naming:** underscores in Terraform resource labels. No rule for Azure `name` values. No commented-out code, and hardcoded values such as CIDRs belong in the config.
 
 ## Known caveats
 
 - azurerm v5 does not auto-register resource providers, so each new provider must be added to `global.resource_providers`.
-- Not yet verified: `bootstrap-backend.sh` against real Azure, and the skill's triggering and template lookup once the plugin is installed.
+- Not yet verified: `bootstrap-backend.sh` against real Azure (both backend variants, and RBAC-only state access, which needs Storage Blob Data Contributor assigned beforehand), and the skill's triggering and template lookup once the plugin is installed.
 - The templates do not ship `.terraform.lock.hcl`. Projects create it on first `init`.
 - A per-environment subscription would need per-environment `.env` files. There is one `.env` for now.
