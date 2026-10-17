@@ -13,6 +13,10 @@
 global:
   environments: [DEV]
   location: northeurope
+  # azurerm v5 does not auto-register resource providers. List what the layers need;
+  # every layer's provider block reads this list.
+  resource_providers:
+    - Microsoft.Storage
   tags:
     created_by: your-name
 
