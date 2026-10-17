@@ -8,7 +8,7 @@ This repo builds a Claude Code skill (packaged as a plugin) that replicates a la
 
 Layout:
 - `plugin/` is the plugin, and the only thing copied into the install cache. Anything shipped must live under it. Repo-level files (`CLAUDE.md`, `README.md`, `install-plugin.sh`, `.idea`, `.claude`) stay outside it.
-- `.claude-plugin/marketplace.json` (repo root) makes the repo a local marketplace, with the plugin source `./plugin`, so `install-plugin.sh` can install it. The marketplace registration records this checkout's path. The installed plugin must not depend on it.
+- `.claude-plugin/marketplace.json` (repo root) makes the repo a marketplace named `timdagit-marketplace`, with the plugin source `./plugin`. It is registered from the GitHub remote (`git@github.com:timdagit/leszek-terraform-skill.git`), never from this checkout as a `directory` source: Claude Code loads a directory-source plugin from the source directory and ignores the cache, so the skill's base directory pointed at the checkout and renaming it broke the plugin. Only pushed commits are installed, so push before running `install-plugin.sh`.
 - `plugin/.claude-plugin/plugin.json` is the plugin manifest. Bump `version` in it when the plugin changes, because installed plugins are cached by version.
 - `plugin/skills/leszek-terraform-skill/SKILL.md` is the skill. Its `description` drives auto-invocation, so change it with care. The body holds the conventions and the rules for what Claude runs and what the user runs.
 - `plugin/skills/leszek-terraform-skill/templates/` is the deliverable: a working project skeleton (`config/`, `layers/00-tfbackend`, `layers/01-example`, `modules/config`, `scripts/`, `.env.example`, `README.md`).

@@ -10,18 +10,27 @@ The skill ships a working project skeleton in `plugin/skills/leszek-terraform-sk
 
 ## Install and update
 
-Needs the `claude` CLI. From a checkout of this repo:
+Needs the `claude` CLI and SSH access to GitHub. Without a checkout:
+
+```
+claude plugin marketplace add git@github.com:timdagit/leszek-terraform-skill.git
+claude plugin install leszek-terraform-plugin@timdagit-marketplace --scope user
+```
+
+Or from a checkout of this repo, which does both and also updates:
 
 ```
 ./install-plugin.sh
 ```
 
-This registers the repo as a local marketplace and installs or updates the plugin at user scope. Only the `plugin/` directory is copied into Claude Code's cache, so the installed plugin is self-contained and keeps working if this checkout moves or is deleted (only updating needs the checkout, and a moved checkout must be re-registered by rerunning the script after `claude plugin marketplace remove local-marketplace`). Restart Claude Code afterwards. Installed plugins are cached by version, so bump `version` in `plugin/.claude-plugin/plugin.json` when you change the plugin, then rerun the script.
+The repo is a marketplace served from its GitHub remote. Claude Code clones it into its own cache, so the installed plugin does not depend on any local checkout, and only pushed commits are installed. Restart Claude Code afterwards. Installed plugins are cached by version, so bump `version` in `plugin/.claude-plugin/plugin.json` when you change the plugin, push, then rerun the script.
+
+Do not register a local checkout as a `directory` marketplace. Claude Code then loads the plugin from that directory instead of its cache, so edits are live and renaming or deleting the checkout breaks the plugin.
 
 ## Repo layout
 
 ```
-.claude-plugin/marketplace.json          local marketplace used by the installer
+.claude-plugin/marketplace.json          marketplace definition, served from the GitHub remote
 plugin/.claude-plugin/plugin.json        plugin manifest
 plugin/skills/leszek-terraform-skill/    SKILL.md and the templates it copies from
 install-plugin.sh                        install or update the plugin
