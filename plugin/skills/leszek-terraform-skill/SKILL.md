@@ -5,7 +5,7 @@ description: Scaffold, extend and review layered Azure Terraform projects. Numbe
 
 # leszek-terraform-skill
 
-A layered Azure Terraform style, started by Leszek. The `templates/` directory next to this file is a working project skeleton. Copy from it instead of writing the harness from memory, and keep the copies identical.
+A layered Azure Terraform style, started by Leszek. The `templates/` directory next to this file is a working project skeleton. Copy from it instead of writing the harness from memory, and keep the copies identical. Take it from this skill's own base directory (the path given when the skill loads, inside the installed plugin). Never search for another copy, such as a plugin source checkout or marketplace directory, because those can be stale or missing.
 
 ## When it applies
 

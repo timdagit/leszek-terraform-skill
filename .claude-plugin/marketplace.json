@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "leszek-terraform-plugin",
-      "source": "./",
+      "source": "./plugin",
       "description": "Conventions and templates for layered, YAML-configured Azure Terraform projects. Hat tip to Leszek.",
       "author": {
         "name": "timdagit"

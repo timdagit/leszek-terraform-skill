@@ -7,9 +7,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This repo builds a Claude Code skill (packaged as a plugin) that replicates a layered Azure Terraform style across future projects. It is named for Leszek, who started the pattern. The style is still being refined, so expect it to change. Suggest improvements as you go, and do not add features until the user is happy with the template.
 
 Layout:
-- `.claude-plugin/plugin.json` is the plugin manifest. `marketplace.json` makes the repo a local marketplace so `install-plugin.sh` can install it. Bump `version` in `plugin.json` when the plugin changes, because installed plugins are cached by version.
-- `skills/leszek-terraform-skill/SKILL.md` is the skill. Its `description` drives auto-invocation, so change it with care. The body holds the conventions and the rules for what Claude runs and what the user runs.
-- `skills/leszek-terraform-skill/templates/` is the deliverable: a working project skeleton (`config/`, `layers/00-tfbackend`, `layers/01-example`, `modules/config`, `scripts/`, `.env.example`, `README.md`).
+- `plugin/` is the plugin, and the only thing copied into the install cache. Anything shipped must live under it. Repo-level files (`CLAUDE.md`, `README.md`, `install-plugin.sh`, `.idea`, `.claude`) stay outside it.
+- `.claude-plugin/marketplace.json` (repo root) makes the repo a local marketplace, with the plugin source `./plugin`, so `install-plugin.sh` can install it. The marketplace registration records this checkout's path. The installed plugin must not depend on it.
+- `plugin/.claude-plugin/plugin.json` is the plugin manifest. Bump `version` in it when the plugin changes, because installed plugins are cached by version.
+- `plugin/skills/leszek-terraform-skill/SKILL.md` is the skill. Its `description` drives auto-invocation, so change it with care. The body holds the conventions and the rules for what Claude runs and what the user runs.
+- `plugin/skills/leszek-terraform-skill/templates/` is the deliverable: a working project skeleton (`config/`, `layers/00-tfbackend`, `layers/01-example`, `modules/config`, `scripts/`, `.env.example`, `README.md`).
 - `README.md` at the repo root covers install and update. `templates/README.md` is the operating guide copied into generated projects.
 
 The pattern came from sample code in another project, which has since been deleted from this repo. Never commit real tenant, subscription, client or secret values. There are no tests or CI. Check changes as described below.
@@ -24,9 +26,9 @@ Do not run the scripts in `templates/scripts/` against real Azure. Test `set-env
 
 ## Checking changes
 
-- **Templates:** copy `skills/leszek-terraform-skill/templates` to a scratch directory inside the repo (e.g. `scratch-tpl/`), `cd` into a layer in its own Bash call, then run `terraform init -backend=false` and `terraform validate`. A `cd` outside the project does not persist. Delete the scratch directory afterwards and never commit it.
+- **Templates:** copy `plugin/skills/leszek-terraform-skill/templates` to a scratch directory inside the repo (e.g. `scratch-tpl/`), `cd` into a layer in its own Bash call, then run `terraform init -backend=false` and `terraform validate`. A `cd` outside the project does not persist. Delete the scratch directory afterwards and never commit it.
 - **Scripts:** `shellcheck` all of them, and `bash -n` / `zsh -n` for syntax. `set-env-config.sh` needs `yq` (mikefarah v4).
-- **Plugin:** `claude plugin validate .` checks the manifests and the skill. It warns that the root `CLAUDE.md` is not loaded as plugin context, which is expected.
+- **Plugin:** `claude plugin validate .` checks the marketplace, and `claude plugin validate plugin` checks the plugin and skill.
 - **Install:** `install-plugin.sh` is the user's to run, and has not been tested by Claude.
 
 ## The pattern

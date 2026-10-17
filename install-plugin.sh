@@ -3,8 +3,10 @@
 # Run it after pulling or editing the plugin, then restart Claude Code.
 #
 # `claude plugin install` only installs from a marketplace, so this repo doubles as a
-# local marketplace (.claude-plugin/marketplace.json). Installed plugins are cached by
-# version, so bump "version" in .claude-plugin/plugin.json for an update to be picked up.
+# local marketplace (.claude-plugin/marketplace.json). Only plugin/ is the plugin, so
+# only its contents are copied into the cache, and the installed plugin does not depend on
+# this checkout. Installed plugins are cached by version, so bump "version" in
+# plugin/.claude-plugin/plugin.json for an update to be picked up.
 
 set -euo pipefail
 
@@ -15,6 +17,7 @@ plugin="leszek-terraform-plugin"
 command -v claude >/dev/null || { echo "claude CLI not found on PATH" >&2; exit 1; }
 
 claude plugin validate "$root"
+claude plugin validate "$root/plugin"
 
 if claude plugin marketplace list | grep -q "$marketplace"; then
   claude plugin marketplace update "$marketplace"
