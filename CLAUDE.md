@@ -45,7 +45,7 @@ Do not run the scripts in `templates/scripts/` against real Azure. Test `set-env
 ## Known caveats
 
 - azurerm v5 does not auto-register resource providers, so each new provider must be added to `global.resource_providers`.
-- Verified by the user against real Azure: `bootstrap-backend.sh` with `00-tfbackend-container` (including the `az role assignment` step, the retry and RBAC-only state access), and the installed skill finding its templates.
+- Verified by the user against real Azure: `bootstrap-backend.sh` with `00-tfbackend-container` (including the `az role assignment` step, the retry and RBAC-only state access), the skill finding its templates in the plugin cache when installed from the GitHub marketplace, and the plugin still loading with the checkout renamed.
 - Not yet verified: `bootstrap-backend.sh` with `00-tfbackend` (new account), and the skill's auto-triggering.
 - The templates do not ship `.terraform.lock.hcl`. Projects create it on first `init`.
 - A per-environment subscription would need per-environment `.env` files. There is one `.env` for now.
