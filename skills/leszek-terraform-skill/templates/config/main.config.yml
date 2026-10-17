@@ -3,8 +3,8 @@
 # Top-level sections:
 #   global     settings shared by all layers
 #   tfbackend  remote state storage, read by the 00-tfbackend layer and the scripts (via yq)
-#   layers     one block per layer, keyed by directory name with the NN- prefix stripped
-#              (layers/01-example reads layers.example)
+#   layers     one block per layer, keyed by the full directory name, number included
+#              (layers/01-example reads layers.01-example)
 #
 # Environment overrides: where a value differs per environment, add a key named
 # after the environment (as listed in global.environments) inside the block. Its
@@ -30,5 +30,5 @@ tfbackend:
   #   storage_acct: myprojecttfbackendprod
 
 layers:
-  example:
+  01-example:
     rg_name: myproject_example

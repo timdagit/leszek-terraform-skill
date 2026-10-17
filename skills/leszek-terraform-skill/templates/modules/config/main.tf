@@ -3,8 +3,8 @@ locals {
   raw          = yamldecode(file(local.config_file))
   environments = local.raw.global.environments
 
-  # Layer directory 02-vnet reads layers.vnet in the config file.
-  layer_name = replace(basename(abspath(path.root)), "/^[0-9]+-/", "")
+  # Layer directory 02-vnet reads layers.02-vnet in the config file (full name, number included).
+  layer_name = basename(abspath(path.root))
 
   blocks = {
     global    = local.raw.global
