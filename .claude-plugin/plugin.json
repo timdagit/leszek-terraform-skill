@@ -1,5 +1,5 @@
 {
   "name": "leszek-terraform-plugin",
-  "description": "Skill for scaffolding layered Terraform projects driven by a single YAML config file",
+  "description": "Conventions and templates for layered, YAML-configured Azure Terraform projects. Provides the leszek-terraform-skill skill.",
   "version": "0.0.1"
 }
