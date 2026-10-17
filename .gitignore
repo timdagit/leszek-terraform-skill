@@ -11,3 +11,6 @@ crash.log
 
 # IDE
 .idea/
+
+# Claude Code bookkeeping
+.claude/.cc-writes
