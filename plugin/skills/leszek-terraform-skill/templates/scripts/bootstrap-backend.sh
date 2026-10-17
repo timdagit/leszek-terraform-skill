@@ -70,7 +70,7 @@ role="Storage Blob Data Contributor"
 if [ -z "$(az role assignment list --subscription "$ARM_SUBSCRIPTION_ID" --assignee "$ARM_CLIENT_ID" --role "$role" --scope "$account_id" --query '[0].id' -o tsv)" ]; then
   echo "Granting '$role' to the service principal on $account_id"
   az role assignment create --subscription "$ARM_SUBSCRIPTION_ID" --assignee "$ARM_CLIENT_ID" \
-    --assignee-principal-type ServicePrincipal --role "$role" --scope "$account_id" >/dev/null
+    --role "$role" --scope "$account_id" >/dev/null
 fi
 
 rm -f "$override"
