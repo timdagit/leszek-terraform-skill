@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This repo builds a Claude Code skill (packaged as a plugin) that replicates a layered Terraform style across future projects. The style is being refined as the skill is built, so expect the pattern to change. Suggest improvements as you go.
 
-Layout: `.claude-plugin/plugin.json` is the plugin manifest and `skills/terraform-layers/SKILL.md` is the skill. Both are stubs for now.
+Layout: `.claude-plugin/plugin.json` is the plugin manifest and `skills/leszek-terraform-skill/SKILL.md` is the skill. Both are stubs for now.
 
 `terraform/` holds sample code taken from another project (Azure, `azurerm ~> 5.0`). It is untracked reference material that will be refactored to the conventions below. It is not the deliverable. There are no tests, linter config or CI.
 

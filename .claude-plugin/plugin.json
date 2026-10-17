@@ -1,5 +1,5 @@
 {
-  "name": "terraform-layers",
+  "name": "leszek-terraform-skill",
   "description": "Skill for scaffolding layered Terraform projects driven by a single YAML config file",
   "version": "0.0.1"
 }
