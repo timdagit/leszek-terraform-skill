@@ -1,0 +1,30 @@
+# Single source of configuration for every layer (replaces tfvars files).
+#
+# Top-level sections:
+#   global     settings shared by all layers
+#   tfbackend  remote state storage, read by the 00-tfbackend layer and the scripts (via yq)
+#   layers     one block per layer, keyed by directory name with the NN- prefix stripped
+#              (layers/01-example reads layers.example)
+#
+# Environment overrides: where a value differs per environment, add a key named
+# after the environment (as listed in global.environments) inside the block. Its
+# settings are merged over the block's plain settings. One level deep only.
+
+global:
+  environments: [DEV]
+  location: northeurope
+  tags:
+    created_by: your-name
+
+tfbackend:
+  rg_name: myproject_tfbackend
+  container_name: tfstate
+  # One storage account per environment (names are globally unique, lowercase alphanumeric).
+  DEV:
+    storage_acct: myprojecttfbackenddev
+  # PROD:
+  #   storage_acct: myprojecttfbackendprod
+
+layers:
+  example:
+    rg_name: myproject_example
