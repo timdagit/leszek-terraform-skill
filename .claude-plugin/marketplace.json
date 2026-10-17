@@ -1,6 +1,6 @@
 {
-  "name": "local-marketplace",
-  "description": "Local marketplace used to install plugins such as leszek-terraform-plugin from a checkout.",
+  "name": "timdagit-marketplace",
+  "description": "Claude Code plugins by timdagit, such as leszek-terraform-plugin.",
   "owner": {
     "name": "timdagit"
   },
