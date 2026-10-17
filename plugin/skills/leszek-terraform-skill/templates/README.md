@@ -21,15 +21,29 @@ scripts/                 set-env-config.sh, bootstrap-backend.sh
 1. `cp .env.example .env` and fill in the service principal values. Never commit `.env`.
 2. Edit `config/main.config.yml`. At minimum set `global.environments`, `global.location`, `global.tags`, and the `tfbackend` names. Storage account names are globally unique, lowercase and alphanumeric.
 
+## Choose the backend layer
+
+The templates ship two backend layers. Keep the one that fits and delete the other, since the bootstrap script expects exactly one `layers/NN-tfbackend*` directory:
+
+| Situation | Keep | Creates |
+|---|---|---|
+| New storage for this project | `00-tfbackend` | resource group, storage account, container |
+| Storage account already exists | `00-tfbackend-container` | container only |
+| Account and container already exist | neither | nothing, no bootstrap needed |
+
+In every case `tfbackend` in the config names the storage: `rg_name`, `storage_acct` and `container_name`, with per-environment overrides. Each environment needs its own storage account or container, because the state key does not include the environment (the config module rejects duplicates).
+
+State access uses Entra ID (RBAC), never storage keys. The service principal needs Storage Blob Data Contributor on the storage account or container. For `00-tfbackend-container` it also needs Contributor on the existing account to create the container. When using existing storage, grant these before bootstrapping.
+
 ## Bootstrap the backend (once per environment)
 
-`layers/00-tfbackend` creates the storage account that holds state for every layer, including its own. The first apply therefore has to use local state, and then the state moves into the new storage. The script does both:
+The backend layer creates the storage that holds state for every layer, including its own. The first apply therefore has to use local state, and then the state moves into the new storage. The script does both:
 
 ```
 scripts/bootstrap-backend.sh DEV
 ```
 
-It loads the environment, applies `00-tfbackend` with a temporary local backend (it prompts before applying), then migrates the state into the new storage account. It refuses to run if local state files are already in the layer directory. Repeat with each environment name from `global.environments`. Each environment gets its own storage account, so the state key does not include the environment.
+It loads the environment, applies the backend layer with a temporary local backend (it prompts before applying), then migrates the state into the new storage. It finds the layer by name (`layers/[0-9][0-9]-tfbackend*`), or takes it as a second argument. It refuses to run if local state files are already in the layer directory. Repeat with each environment name from `global.environments`.
 
 ## Everyday use
 
@@ -57,7 +71,7 @@ Apply layers in numeric order. Layers share no remote state, so their only coupl
 `config/main.config.yml` has three top-level sections:
 
 - `global`: settings shared by all layers (`environments`, `location`, `resource_providers`, `tags`)
-- `tfbackend`: the remote state storage, read by `00-tfbackend` and by the scripts
+- `tfbackend`: the remote state storage, read by the backend layer and by the scripts
 - `layers`: one block per layer, keyed by the full directory name (`layers/01-example` reads `layers.01-example`)
 
 Where a value differs per environment, add a key named after the environment inside the block. Its settings are merged over the plain ones, one level deep:
@@ -75,7 +89,7 @@ Layers read their block through `module.config.layer`, and the shared sections t
 ## Adding things
 
 - **A layer:** copy an existing layer directory to `layers/NN-name`, keep `terraform.tf` unchanged, replace the resources, and add a `layers.NN-name` block to the config. Use the full name, number included.
-- **An environment:** add it to `global.environments`, add its `tfbackend.<ENV>.storage_acct`, then bootstrap it.
+- **An environment:** add it to `global.environments`, add its `tfbackend.<ENV>.storage_acct` (or `container_name` when sharing an account), then bootstrap it.
 - **A resource provider:** azurerm v5 does not register providers automatically. Add the namespace to `global.resource_providers`.
 
 ## Conventions

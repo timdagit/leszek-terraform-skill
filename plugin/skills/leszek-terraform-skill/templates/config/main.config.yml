@@ -2,7 +2,9 @@
 #
 # Top-level sections:
 #   global     settings shared by all layers
-#   tfbackend  remote state storage, read by the 00-tfbackend layer and the scripts (via yq)
+#   tfbackend  remote state storage, read by the backend layer and the scripts (via yq).
+#              rg_name, storage_acct and container_name may name existing resources.
+#              Each environment needs its own storage_acct or container_name.
 #   layers     one block per layer, keyed by the full directory name, number included
 #              (layers/01-example reads layers.01-example)
 #
