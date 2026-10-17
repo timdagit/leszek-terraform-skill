@@ -9,7 +9,7 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-marketplace="leszek-terraform"
+marketplace="timda-plugins"
 plugin="leszek-terraform-plugin"
 
 command -v claude >/dev/null || { echo "claude CLI not found on PATH" >&2; exit 1; }

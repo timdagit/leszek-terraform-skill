@@ -1,6 +1,6 @@
 {
-  "name": "leszek-terraform",
-  "description": "Local marketplace for installing leszek-terraform-plugin from this checkout. Hat tip to Leszek, who started the pattern.",
+  "name": "timda-plugins",
+  "description": "timdagit's local marketplace, used to install plugins such as leszek-terraform-plugin from a checkout.",
   "owner": {
     "name": "timdagit"
   },
