@@ -9,7 +9,9 @@
 # - Loads credentials (ARM_*) from .env next to the scripts directory (see .env.example).
 # - Exports TF_VAR_environment, the only Terraform variable.
 # - Reads the backend resource group, storage account and container from config/main.config.yml
-#   with yq (mikefarah/yq v4) and exports them as TF_CLI_ARGS_init.
+#   with yq (mikefarah/yq v4) and exports them as TF_CLI_ARGS_init. State access uses Entra ID
+#   (RBAC), never storage keys, so the service principal needs Storage Blob Data Contributor
+#   on the storage account or container.
 # - Defines tfinit, which adds the state key (the layer directory name, e.g. 01-example.tfstate).
 #   The key is worked out when tfinit runs, so changing directory can never point a layer at
 #   another layer's state. A bare "terraform init" has no key and will prompt for one.
@@ -49,7 +51,7 @@ _set_env_config() {
   container_name="$(_set_env_config_get "$config" "$env" container_name)" || return 1
 
   export TF_VAR_environment="$env"
-  export TF_CLI_ARGS_init="-backend-config=subscription_id=${ARM_SUBSCRIPTION_ID:-} -backend-config=resource_group_name=${rg_name} -backend-config=storage_account_name=${storage_acct} -backend-config=container_name=${container_name}"
+  export TF_CLI_ARGS_init="-backend-config=subscription_id=${ARM_SUBSCRIPTION_ID:-} -backend-config=resource_group_name=${rg_name} -backend-config=storage_account_name=${storage_acct} -backend-config=container_name=${container_name} -backend-config=use_azuread_auth=true"
 
   echo "environment: $env  backend: $storage_acct ($rg_name/$container_name)"
 }
