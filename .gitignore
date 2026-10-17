@@ -14,3 +14,4 @@ crash.log
 
 # Claude Code bookkeeping
 .claude/.cc-writes
+.claude/settings.local.json
