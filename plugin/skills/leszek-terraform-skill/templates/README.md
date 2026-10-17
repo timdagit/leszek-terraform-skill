@@ -45,6 +45,8 @@ scripts/bootstrap-backend.sh DEV
 
 It needs the Azure CLI, logged in with `az login` as someone who can create role assignments (Owner or User Access Administrator) on the storage account. It checks for `az` and a working login first, and stops before creating anything if either is missing. The script loads the environment, applies the backend layer with a temporary local backend (it prompts before applying), grants the service principal Storage Blob Data Contributor on the account if it lacks it, then migrates the state into the new storage. The migration retries for a few minutes, because a new role assignment takes time to propagate. It finds the layer by name (`layers/[0-9][0-9]-tfbackend*`), or takes it as a second argument. It refuses to run if local state files are already in the layer directory. Repeat with each environment name from `global.environments`.
 
+To see the state blob in the Azure portal, set the container's authentication method to "Microsoft Entra user account". The portal defaults to the account key, which is disabled, so the blob list looks empty or errors. Your own user also needs a data role on the account, such as Storage Blob Data Reader.
+
 ## Everyday use
 
 Source the environment script once per shell. It must be sourced, not executed:
