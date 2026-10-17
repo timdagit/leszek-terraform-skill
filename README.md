@@ -36,6 +36,15 @@ plugin/skills/leszek-terraform-skill/    SKILL.md and the templates it copies fr
 install-plugin.sh                        install or update the plugin
 ```
 
+## Not done yet
+
+Ideas that came up and were deferred until the template has been used on a real project:
+
+- **Resume mode for the bootstrap.** If `bootstrap-backend.sh` fails after the apply, for example when the state migration times out, recovery is manual. Re-run `terraform init -migrate-state` by hand in the backend layer. A flag to skip straight to the role grant and migration would make this safer.
+- **Early check for role-assignment rights.** The script checks the Azure CLI login but not that the logged-in user can create role assignments, so a missing right only shows up after the storage is created.
+- **Cross-subscription backends.** There is one subscription and one `.env`. Keeping state in a different subscription from the resources, or one subscription per environment, would need per-environment `.env` files and a subscription per `tfbackend` entry.
+- **Backend layer choice.** Both `00-tfbackend` and `00-tfbackend-container` ship, so a scaffolded project has to delete one. A single backend layer that creates the account only when asked would remove that step.
+
 ## Developing
 
 To check template changes, copy `plugin/skills/leszek-terraform-skill/templates` to a scratch directory, then run `terraform init -backend=false` and `terraform validate` in each layer. Lint the scripts with `shellcheck`. `claude plugin validate .` checks the marketplace and `claude plugin validate plugin` checks the plugin and skill.
