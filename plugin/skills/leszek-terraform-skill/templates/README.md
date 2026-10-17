@@ -43,7 +43,7 @@ The backend layer creates the storage that holds state for every layer, includin
 scripts/bootstrap-backend.sh DEV
 ```
 
-It needs the Azure CLI, logged in with `az login` as someone who can create role assignments (Owner or User Access Administrator) on the storage account. The script loads the environment, applies the backend layer with a temporary local backend (it prompts before applying), grants the service principal Storage Blob Data Contributor on the account if it lacks it, then migrates the state into the new storage. The migration retries for a few minutes, because a new role assignment takes time to propagate. It finds the layer by name (`layers/[0-9][0-9]-tfbackend*`), or takes it as a second argument. It refuses to run if local state files are already in the layer directory. Repeat with each environment name from `global.environments`.
+It needs the Azure CLI, logged in with `az login` as someone who can create role assignments (Owner or User Access Administrator) on the storage account. It checks for `az` and a working login first, and stops before creating anything if either is missing. The script loads the environment, applies the backend layer with a temporary local backend (it prompts before applying), grants the service principal Storage Blob Data Contributor on the account if it lacks it, then migrates the state into the new storage. The migration retries for a few minutes, because a new role assignment takes time to propagate. It finds the layer by name (`layers/[0-9][0-9]-tfbackend*`), or takes it as a second argument. It refuses to run if local state files are already in the layer directory. Repeat with each environment name from `global.environments`.
 
 ## Everyday use
 
