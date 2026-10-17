@@ -1,0 +1,13 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfplan
+
+# Local credentials and per-machine values
+.env
+.env.local
+
+# IDE
+.idea/
