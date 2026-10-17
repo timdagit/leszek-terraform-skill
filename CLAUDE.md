@@ -12,7 +12,7 @@ Layout:
 - `skills/leszek-terraform-skill/templates/` is the deliverable: a working project skeleton (`config/`, `layers/00-tfbackend`, `layers/01-example`, `modules/config`, `scripts/`, `.env.example`, `README.md`).
 - `README.md` at the repo root covers install and update. `templates/README.md` is the operating guide copied into generated projects.
 
-`terraform/` is untracked sample code from another project (Azure, `azurerm ~> 5.0`). It is reference only, not the deliverable. It may later be rewritten as worked examples. `terraform/set-env-config.sh` holds real tenant, subscription and client IDs, so never copy them into docs or commits. There are no tests or CI. Check changes as described below.
+The pattern came from sample code in another project, which has since been deleted from this repo. Never commit real tenant, subscription, client or secret values. There are no tests or CI. Check changes as described below.
 
 ## Git, Terraform and the sandbox
 

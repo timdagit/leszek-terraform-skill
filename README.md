@@ -25,7 +25,6 @@ This registers the repo as a local marketplace and installs or updates the plugi
 .claude-plugin/marketplace.json   local marketplace used by the installer
 skills/leszek-terraform-skill/    SKILL.md and the templates it copies from
 install-plugin.sh                 install or update the plugin
-terraform/                        sample from the project this came from (untracked reference)
 ```
 
 ## Developing
