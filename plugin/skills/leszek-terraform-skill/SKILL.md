@@ -45,7 +45,7 @@ Copy `templates/` for these, then replace the example layer and the placeholder 
 - **State:** each environment has its own backend storage account or container, so the environment is not in the state key. The key is the layer directory name. Access is Entra ID (RBAC) only, never storage keys.
 - **Providers:** azurerm v5 does not register resource providers. Add each needed namespace to `global.resource_providers`.
 - **Clean code:** no commented-out code. Remove it rather than leave it.
-- **Secrets:** never put credentials in config, code or docs. They live only in `.env`. `TF_VAR_environment` is the only Terraform variable for now, but the same route can carry secrets or passwords later: add a `TF_VAR_<name>` to `.env` (and `.env.example` with a placeholder), declare a `sensitive` variable in the layers that need it, and keep the value out of the YAML. Only do this when a layer needs it, and tell the user the `terraform.tf` copies and the template must change together.
+- **Secrets:** never put credentials in config, code or docs. They live only in `.env`. `TF_VAR_environment` is the only Terraform variable for now. Secrets or passwords may be handled later, but as part of the layer's own config, never as extra variables in `terraform.tf`, which stays identical in every layer. Do not add that mechanism unprompted. Ask the user how it should work when a layer first needs one.
 
 ## Adding a layer
 
