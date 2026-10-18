@@ -88,6 +88,24 @@ layers:
       address_space: 10.1.0.0/16
 ```
 
+When one layer refers to a resource another layer owns, such as a lookup of an existing VNet by name, share the value with a YAML anchor in the owning layer and an alias in the consuming layer. The two copies then cannot drift apart:
+
+```yaml
+layers:
+  02-vnet:
+    rg_name: &main_vnet_rg vnet_main
+    name: &main_vnet_name main_vnet
+  11-aca:
+    vnet_rg_name: *main_vnet_rg
+    vnet_name: *main_vnet_name
+```
+
+- The anchor must come before the alias in the file. Numbered layers make that natural, because the owning layer is usually the lower number.
+- Name anchors after the resource and property (`main_vnet_rg`), not the consuming layer, so several layers can share one.
+- Alias whole scalar values only. Terraform's YAML parser does not support `<<` merge keys.
+- An alias does not follow an environment override on the anchored value. If the owning layer overrides it for an environment, put the override on both layers.
+- An alias shares a value and nothing more. It does not make the consuming layer wait for the owning one, so apply the owning layer first or its lookup fails.
+
 Layers read their block through `module.config.layer`, and the shared sections through `module.config.global` and `module.config.tfbackend`. Using an environment that is not in `global.environments` fails the plan.
 
 `TF_VAR_environment` is the only Terraform variable for now. If a layer later needs a secret or password, it will be handled as part of that layer's own config, not as extra variables in `terraform.tf`. Never put the value itself in the YAML.
