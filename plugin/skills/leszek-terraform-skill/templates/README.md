@@ -90,6 +90,8 @@ layers:
 
 Layers read their block through `module.config.layer`, and the shared sections through `module.config.global` and `module.config.tfbackend`. Using an environment that is not in `global.environments` fails the plan.
 
+`TF_VAR_environment` is the only Terraform variable for now. If a layer later needs a secret or password, it can follow the same route: put `TF_VAR_<name>` in `.env` (with a placeholder in `.env.example`) and declare a `sensitive` variable in that layer. Keep the value out of the YAML.
+
 ## Adding things
 
 - **A layer:** copy an existing layer directory to `layers/NN-name`, keep `terraform.tf` unchanged, replace the resources, and add a `layers.NN-name` block to the config. Use the full name, number included.
