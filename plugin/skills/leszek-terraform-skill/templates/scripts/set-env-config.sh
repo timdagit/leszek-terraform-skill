@@ -15,6 +15,7 @@
 # - Defines tfinit, which adds the state key (the layer directory name, e.g. 01-example.tfstate).
 #   The key is worked out when tfinit runs, so changing directory can never point a layer at
 #   another layer's state. A bare "terraform init" has no key and will prompt for one.
+#   tfinit only exists in a shell that has sourced this script (not in a new terminal or tab).
 
 # $1 script path, $2 environment name
 _set_env_config() {

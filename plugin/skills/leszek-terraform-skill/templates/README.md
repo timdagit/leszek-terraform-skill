@@ -64,7 +64,9 @@ terraform plan
 terraform apply
 ```
 
-`tfinit` is `terraform init` plus the state key, which is the layer directory name (`01-example.tfstate`). It works the key out each time it runs, so moving between layers is safe. A bare `terraform init` has no key and will prompt for one. Run `tfinit` again after changing environment or backend settings (add `-reconfigure`). To switch environment, source the script again with the other name.
+`tfinit` is a shell function defined by sourcing the script, so it only exists in a shell that has sourced it. In a new terminal or tab it is "command not found" until you source again. It is `terraform init` plus the state key, which is the layer directory name (`01-example.tfstate`), and it works the key out each time it runs, so moving between layers is safe.
+
+Without sourcing, `terraform init` and `plan` fail or prompt, because `TF_VAR_environment` and the backend settings are missing. A bare `terraform init` has no key and will prompt for one. Run `tfinit` again after changing environment or backend settings (add `-reconfigure`). To switch environment, source the script again with the other name.
 
 Apply layers in numeric order. Layers share no remote state, so their only coupling is shared names in the config file.
 

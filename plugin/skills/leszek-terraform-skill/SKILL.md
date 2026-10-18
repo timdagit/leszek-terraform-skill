@@ -55,10 +55,12 @@ Copy the example layer to `layers/NN-name`, use the next free number, keep `terr
 
 Operations are in the project's `README.md` (copied from `templates/README.md`): bootstrap the backend with `scripts/bootstrap-backend.sh <ENV>`, then per shell `source scripts/set-env-config.sh <ENV>`, and per layer `tfinit`, `terraform plan`, `terraform apply`. Point the user to it rather than restating it.
 
+`tfinit` is a function defined by sourcing `set-env-config.sh`, so it does not exist in a new shell or tab. Without the source, `terraform init` and `plan` fail or prompt, because `TF_VAR_environment` and the backend settings are missing.
+
 When driving from Claude Code, the split matters:
 
 - **Do yourself:** write code and config, `terraform fmt`, `terraform init -backend=false`, `terraform validate`. Run each as a single direct command so the sandbox exclusions match (no chaining, no `-chdir`).
-- **Hand to the user:** sourcing `set-env-config.sh`, `tfinit`, `plan`, `apply`, `destroy` and the bootstrap. They need `.env` credentials, which you must not read, and shell state from `source` does not persist between your commands. Give the exact commands and say they should run them in their own terminal.
+- **Hand to the user:** sourcing `set-env-config.sh`, `tfinit`, `plan`, `apply`, `destroy` and the bootstrap. They need `.env` credentials, which you must not read, and shell state from `source` does not persist between your commands. Give the exact commands and say they should run them in their own terminal. Always give the `source scripts/set-env-config.sh <ENV>` line together with `tfinit`, never `tfinit` on its own.
 - **Never** read, print or echo `.env` or any `ARM_*` value, and never run `apply` or `destroy` unasked.
 
 ## Checking a change
