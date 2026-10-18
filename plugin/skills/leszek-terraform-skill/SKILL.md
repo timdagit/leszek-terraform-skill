@@ -51,6 +51,10 @@ Copy `templates/` for these, then replace the example layer and the placeholder 
 
 Copy the example layer to `layers/NN-name`, use the next free number, keep `terraform.tf` as is, replace the resources, and add a `layers.NN-name` block to the config. Add any new resource providers to `global.resource_providers`.
 
+## Updating a project after the plugin changes
+
+`templates/README.md` is a generic guide. Once it has been copied into a project and customised, it belongs to that project. Never overwrite it, or any other customised file, from a newer copy of the templates. Only edit in place the sections that describe the plugin (for example the scripts, `tfinit` or the bootstrap) and only when the plugin's behaviour has changed. Leave the project's own content alone. Show the user what you propose to change first.
+
 ## Operating it: who runs what
 
 Operations are in the project's `README.md` (copied from `templates/README.md`): bootstrap the backend with `scripts/bootstrap-backend.sh <ENV>`, then per shell `source scripts/set-env-config.sh <ENV>`, and per layer `tfinit`, `terraform plan`, `terraform apply`. Point the user to it rather than restating it.
