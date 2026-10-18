@@ -20,7 +20,7 @@ The pattern came from sample code in another project, which has since been delet
 
 Git commands (`git init`, `git add`, `git commit`, etc.) are excluded from the Bash sandbox by command pattern. Run each one as a single, direct command. Do not chain them with `&&`, `;` or a `cd` prefix, and do not wrap them in `-C`, a subshell or a script, or they will not match the exclusion and will fail with "Operation not permitted" on `.git`. If the shell is not in the repo root, `cd` in a separate Bash call first. Make one commit per call.
 
-`terraform init`, `terraform validate` and `terraform plan` are excluded the same way, so the same rule applies: run each as a single direct command with at least one flag, e.g. `terraform init -backend=false` and `terraform validate -no-color`. Do not chain them or use `-chdir`. `apply` and `destroy` are deliberately not excluded. `terraform fmt` needs no exclusion. Do not run `plan` against real infrastructure unless asked. `chmod` is denied, so give the user the command instead.
+`terraform init`, `validate` and `plan` are excluded the same way (see the user-level CLAUDE.md for the command shape). `apply` and `destroy` are deliberately not excluded. `terraform fmt` needs no exclusion. Do not run `plan` against real infrastructure unless asked. `chmod` is denied, so give the user the command instead.
 
 Do not run the scripts in `templates/scripts/` against real Azure. Test `set-env-config.sh` in a scratch copy with the placeholder `.env.example` values, and take care that `tfinit` there runs a real `terraform init`.
 
